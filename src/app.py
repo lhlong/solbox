@@ -21,11 +21,14 @@ logger.add(os.path.join(LOG_DIR, "app.log"), rotation="1 MB")
 tagids = deque(maxlen=20)
 
 
-def audio_thread():
+def play_audio():
     while True:
         if (len(tagids) > 0):
             tag_id = tagids[-1]
             try:
+                if tag_id == "0013912333":
+                    os.system("killall play")
+                
                 tags = [p for p in os.listdir(DATA_DIR)]
                 if tag_id in tags:
                     path = os.path.join(DATA_DIR, tag_id)
@@ -43,7 +46,7 @@ def audio_thread():
             time.sleep(0.001)
 
 
-audio_thr = threading.Thread(target=audio_thread, args=[])
+audio_thr = threading.Thread(target=play_audio, args=[])
 audio_thr.daemon = True
 audio_thr.start()
 
