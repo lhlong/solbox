@@ -21,14 +21,27 @@ logger.add(os.path.join(LOG_DIR, "app.log"), rotation="1 MB")
 tagids = deque(maxlen=20)
 
 
+def stop_audio():
+    while True:
+        if (len(tagids) > 0):
+            tag_id = tagids.popleft()
+            try:
+                if tag_id == "0013912333":
+                    os.system("killall play")
+                    logger.debug("Killall play")
+                
+            except Exception as e:
+                logger.debug(e)
+                logger.debug("ERR: Audio stop got a problem")
+        else:
+            time.sleep(0.001)
+
+
 def play_audio():
     while True:
         if (len(tagids) > 0):
             tag_id = tagids[-1]
             try:
-                if tag_id == "0013912333":
-                    os.system("killall play")
-                
                 tags = [p for p in os.listdir(DATA_DIR)]
                 if tag_id in tags:
                     path = os.path.join(DATA_DIR, tag_id)
@@ -38,10 +51,10 @@ def play_audio():
                         path = os.path.join(path, str(filenames[idx]))
                         logger.debug(path)
                         os.system("play -v 3 " + path)
-                        tag = tagids.popleft()
+                        tag_id = tagids.popleft()
             except Exception as e:
                 logger.debug(e)
-                logger.debug("ERR: Audio thread got a problem")
+                logger.debug("ERR: Audio play got a problem")
         else:
             time.sleep(0.001)
 
@@ -50,6 +63,9 @@ audio_thr = threading.Thread(target=play_audio, args=[])
 audio_thr.daemon = True
 audio_thr.start()
 
+stop_audio_thr = threading.Thread(target=stop_audio, args=[])
+stop_audio_thr.daemon = True
+stop_audio_thr.start()
 
 def connect_to_rfid():
     device = usb.core.find(idVendor=VENDOR_ID, idProduct=PRODUCT_ID)
