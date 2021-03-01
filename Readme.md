@@ -1,6 +1,6 @@
 # SOLBOX
-- music box for Sol
 
+- music box for Sol
 
 ## RFID Reader
 

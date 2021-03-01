@@ -24,11 +24,12 @@ tagids = deque(maxlen=20)
 def stop_audio():
     while True:
         if (len(tagids) > 0):
-            tag_id = tagids.popleft()
+            tag_id = tagids[-1]
             try:
                 if tag_id == "0013912333":
                     os.system("killall play")
                     logger.debug("Killall play")
+                    tagids.clear()
                 
             except Exception as e:
                 logger.debug(e)
@@ -39,19 +40,24 @@ def stop_audio():
 
 def play_audio():
     while True:
-        if (len(tagids) > 0):
-            tag_id = tagids[-1]
+        if (len(tagids) > 0):            
             try:
-                tags = [p for p in os.listdir(DATA_DIR)]
-                if tag_id in tags:
-                    path = os.path.join(DATA_DIR, tag_id)
-                    filenames = [p for p in os.listdir(path)]
-                    if len(filenames) > 0:
-                        idx = random.randrange(len(filenames))
-                        path = os.path.join(path, str(filenames[idx]))
-                        logger.debug(path)
-                        os.system("play -v 3 " + path)
-                        tag_id = tagids.popleft()
+                tag_id = tagids[-1]
+                if tag_id == "0013912333":
+                    os.system("killall play")
+                    logger.debug("Killall play")
+                    tagids.clear()
+                else:
+                    tags = [p for p in os.listdir(DATA_DIR)]
+                    if tag_id in tags:
+                        path = os.path.join(DATA_DIR, tag_id)
+                        filenames = [p for p in os.listdir(path)]
+                        if len(filenames) > 0:
+                            idx = random.randrange(len(filenames))
+                            path = os.path.join(path, str(filenames[idx]))
+                            logger.debug(path)
+                            os.system("play -v 3 " + path)
+                            tagids.popleft()
             except Exception as e:
                 logger.debug(e)
                 logger.debug("ERR: Audio play got a problem")
@@ -132,7 +138,7 @@ def main():
                 if (len(tagids) == 0) or ((len(tagids) > 0) and (tagids[-1] != tag_id)):
                     tagids.append(tag_id)
 
-                print("TAG ID: {}".format(tag_id))
+                logger.info("TAG ID: {}".format(tag_id))
                 tag_id = ""
                 data = []
 
