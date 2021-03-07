@@ -16,9 +16,20 @@ import queue
 import threading
 from collections import deque
 import random
+import json
+
 
 logger.add(os.path.join(LOG_DIR, "app.log"), rotation="1 MB")
 tagids = deque(maxlen=20)
+
+def read_tags():
+    with open(CODE_FILENAME, 'r') as f:
+        data = json.load(f)
+
+    return data["code"]
+
+
+tags = read_tags()
 
 
 def stop_audio():
@@ -48,9 +59,9 @@ def play_audio():
                     logger.debug("Killall play")
                     tagids.clear()
                 else:
-                    tags = [p for p in os.listdir(DATA_DIR)]
+                    # tags = [p for p in os.listdir(DATA_DIR)]
                     if tag_id in tags:
-                        path = os.path.join(DATA_DIR, tag_id)
+                        path = os.path.join(DATA_DIR, tags[tag_id])
                         filenames = [p for p in os.listdir(path)]
                         if len(filenames) > 0:
                             idx = random.randrange(len(filenames))
