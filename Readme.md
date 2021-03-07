@@ -5,9 +5,9 @@
 This repository provide a source code for music box - a tool for kids.
 Just swipe the card and enjoy your favorite music.
 
-![rfid-card](./data/image/solbox1.jpg | width=100)
+![](./src/data/image/solbox1.jpg)
 
-![tags](./data/image/solbox2.jpg | width=100)
+![](./src/data/image/solbox2.jpg)
 
 ## 1. RFID Reader
 
@@ -16,6 +16,14 @@ Just swipe the card and enjoy your favorite music.
 ### 1.1. Get Device ID
 
 > lsusb
+
+Here is my current values:
+
+```text
+# RFID Device ID
+VENDOR_ID = 0x08ff
+PRODUCT_ID = 0x0009
+```
 
 ### 1.2. Set permission for usb
 
